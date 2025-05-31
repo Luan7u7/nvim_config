@@ -33,15 +33,24 @@ return {
       local MiniFiles = require 'mini.files'
       MiniFiles.setup {
         mappings = {
-          go_in = '<CR>', -- Map both Enter and L to enter directories or open files
+          close = 'q',
+          go_in = 'l',
           go_in_plus = 'L',
-          go_out = '-',
+          go_out = 'h',
           go_out_plus = 'H',
+          mark_goto = "'",
+          mark_set = 'm',
+          reset = '<BS>',
+          reveal_cwd = '@',
+          show_help = 'g?',
+          synchronize = '=',
+          trim_left = '<',
+          trim_right = '>',
         },
       }
-      vim.keymap.set('n', '<leader>ee', '<cmd>lua MiniFiles.open()<CR>', { desc = 'Toggle mini file explorer' }) -- toggle file explorer
-      vim.keymap.set('n', '<leader>ef', function()
-        MiniFiles.open(vim.api.nvim_buf_get_name(0), false)
+      vim.keymap.set('n', '<leader>em', '<cmd>lua MiniFiles.open()<CR>', { desc = 'Toggle mini file explorer' }) -- toggle file explorer
+      vim.keymap.set('n', '<leader>el', function()
+        MiniFiles.open(vim.api.nvim_buf_get_name(0), true)
         MiniFiles.reveal_cwd()
       end, { desc = 'Toggle into currently opened file' })
     end,

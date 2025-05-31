@@ -11,10 +11,11 @@ vim.opt.autoindent = true
 
 -- line wrapping
 vim.opt.wrap = true
+vim.bo.columcolor = '80'
 
 -- open new panes right
 vim.opt.splitright = true
 vim.opt.splitbelow = true
 
 -- set cursor pipe
-vim.opt.guicursor = ''
+vim.opt.guicursor = ' '
