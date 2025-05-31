@@ -41,6 +41,7 @@ P.S. You can delete this when you're done too. It's your config now :)
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are required (otherwise wrong leader will be used)
+
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ''
 -- [[ Install `lazy.nvim` plugin manager ]]
@@ -59,6 +60,13 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+-- Create custom plugins directory if it doesn't exist
+-- This needs to be created before lazy.setup is called
+local custom_plugins_dir = vim.fn.stdpath('config') .. '/lua/custom/plugins'
+if vim.fn.isdirectory(custom_plugins_dir) == 0 then
+  vim.fn.mkdir(custom_plugins_dir, 'p')
+end
+
 -- [[ Configure plugins ]]
 -- NOTE: Here is where you install your plugins.
 --  You can configure plugins using the `config` key.
@@ -74,6 +82,36 @@ require('lazy').setup({
 
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
+
+  -- Disable netrw for nvim-tree
+  vim.g.loaded_netrw = 1
+  vim.g.loaded_netrwPlugin = 1
+
+  -- nvim-tree (file explorer)
+  {
+    'nvim-tree/nvim-tree.lua',
+    dependencies = {
+      'nvim-tree/nvim-web-devicons',
+    },
+    config = function()
+      require('nvim-tree').setup({
+        sort_by = "case_sensitive",
+        view = {
+          width = 30,
+        },
+        renderer = {
+          group_empty = true,
+        },
+        filters = {
+          dotfiles = false,
+        },
+      })
+      
+      -- Key mappings
+      vim.keymap.set('n', '<leader>e', ':NvimTreeToggle<CR>', { desc = 'Toggle file explorer' })
+      vim.keymap.set('n', '<leader>fe', ':NvimTreeFindFile<CR>', { desc = 'Find file in explorer' })
+    end,
+  },
 
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
@@ -191,10 +229,10 @@ require('lazy').setup({
   },
 
   {
-    'folke/tokyonight.nvim',
+    'nyoom-engineering/oxocarbon.nvim',
     priority = 1000,
     init = function()
-      vim.cmd.colorscheme 'tokyonight-night'
+      vim.cmd.colorscheme 'oxocarbon'
     end,
   },
 
@@ -205,7 +243,7 @@ require('lazy').setup({
     opts = {
       options = {
         icons_enabled = true,
-        theme = 'tokyonight',
+        theme = 'oxocarbon',
         component_separators = '|',
         section_separators = '',
       },
@@ -244,15 +282,28 @@ require('lazy').setup({
     dependencies = {
       'nvim-lua/plenary.nvim',
       -- Fuzzy Finder Algorithm which requires local dependencies to be built.
-      -- Only load if `make` is available. Make sure you have the system
+      -- Only load if `cmake` is available. Make sure you have the system
       -- requirements installed.
       {
         'nvim-telescope/telescope-fzf-native.nvim',
         -- NOTE: If you are having trouble with this installation,
         --       refer to the README for telescope-fzf-native for more instructions.
-        build = 'make',
+        build = function()
+          -- Windows specific build command
+          if vim.fn.has('win32') == 1 then
+            -- On Windows, use prebuilt C port of fzf
+            return 'mkdir -p build && curl -L https://github.com/nvim-telescope/telescope-fzf-native.nvim/releases/download/v0.0.1/libfzf.dll -o build/libfzf.dll'
+          else
+            -- Unix build command
+            return 'make'
+          end
+        end,
         cond = function()
-          return vim.fn.executable 'make' == 1
+          if vim.fn.has('win32') == 1 then
+            return vim.fn.executable('curl') == 1
+          else
+            return vim.fn.executable('make') == 1
+          end
         end,
       },
     },
@@ -279,7 +330,10 @@ require('lazy').setup({
   --    Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   --
   --    For additional information see: https://github.com/folke/lazy.nvim#-structuring-your-plugins
-  { import = 'custom.plugins' },
+  -- Custom plugins are currently disabled until properly set up
+  -- {
+  --   import = 'custom.plugins',
+  -- },
 }, {})
 
 -- [[ Setting options ]]
@@ -308,7 +362,7 @@ vim.o.breakindent = true
 
 -- Save undo history
 vim.o.undofile = true
-vim.o.undodir = os.getenv 'HOME' .. '/.config/nvim/undodir'
+vim.o.undodir = vim.fn.stdpath('config') .. '/undodir'
 
 -- Case-insensitive searching UNLESS \C or capital in search
 vim.o.ignorecase = true
@@ -374,7 +428,17 @@ require('telescope').setup {
 }
 
 -- Enable telescope fzf native, if installed
-pcall(require('telescope').load_extension, 'fzf')
+-- Try to load telescope-fzf-native extension with proper error handling
+vim.defer_fn(function()
+  local status_ok, _ = pcall(require('telescope').load_extension, 'fzf')
+  if not status_ok then
+    vim.notify('telescope-fzf-native extension not found. Run :Lazy sync to build it', vim.log.levels.WARN)
+    -- Additional Windows-specific guidance
+    if vim.fn.has('win32') == 1 then
+      vim.notify('On Windows, you may need to run :Lazy build telescope-fzf-native.nvim manually', vim.log.levels.INFO)
+    end
+  end
+end, 1000) -- Delay for 1 second to ensure plugin is loaded
 
 -- Telescope live_grep in git root
 -- Function to find the git root directory based on the current buffer's path
@@ -465,7 +529,7 @@ vim.defer_fn(function()
     -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
     auto_install = true,
     -- Install languages synchronously (only applied to `ensure_installed`)
-    sync_install = true,
+    sync_install = false,
     -- List of parsers to ignore installing
     ignore_install = {},
     -- You can specify additional Treesitter modules here: -- For example: -- playground = {--enable = true,-- },
@@ -577,6 +641,8 @@ end
 require('which-key').register {
   ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
   ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
+  ['<leader>e'] = { name = 'Open [E]xplorer', _ = 'which_key_ignore' },
+  ['<leader>f'] = { name = '[F]ile', _ = 'which_key_ignore' },
   ['<leader>g'] = { name = '[G]it', _ = 'which_key_ignore' },
   ['<leader>h'] = { name = 'Git [H]unk', _ = 'which_key_ignore' },
   ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
@@ -593,8 +659,49 @@ require('which-key').register({
 
 -- mason-lspconfig requires that these setup functions are called in this order
 -- before setting up the servers.
-require('mason').setup()
-require('mason-lspconfig').setup()
+require('mason').setup({
+  -- Windows specific path handling
+  PATH = "prepend", -- "skip", "prepend", "append"
+  ui = {
+    icons = {
+      package_installed = "✓",
+      package_pending = "➜",
+      package_uninstalled = "✗"
+    }
+  }
+})
+
+-- Configure mason-tool-installer to ensure all required tools are installed
+-- Only include tools that work well on Windows
+require('mason-tool-installer').setup {
+  ensure_installed = {
+    -- LSP servers
+    'clangd',
+    'pyright',
+    'rust_analyzer',
+    'tsserver',
+    'lua_ls',
+    'tailwindcss',
+    'astro',
+    'cssmodules_ls',
+    'eslint',
+    'gopls',
+    'htmx',
+    
+    -- Formatters that work well on Windows
+    'prettier',
+    'stylua',
+    'black',
+    
+    -- Linters that work well on Windows
+    'eslint_d',
+  },
+  auto_update = true,
+  run_on_start = true,
+}
+
+-- Initialize mason_lspconfig early to avoid nil errors
+local mason_lspconfig = require('mason-lspconfig')
 
 -- Enable the following language servers
 --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
@@ -605,9 +712,9 @@ require('mason-lspconfig').setup()
 --  If you want to override the default filetypes that your language server will attach to you can
 --  define the property 'filetypes' to the map in question.
 local servers = {
-  -- clangd = {},
-  -- pyright = {},
-  -- rust_analyzer = {},
+  clangd = {},
+  pyright = {},
+  rust_analyzer = {},
   tsserver = {},
   -- html = { filetypes = { 'html', 'twig', 'hbs', 'typescriptreact', 'javascriptreact'} },
   tailwindcss = {},
@@ -634,21 +741,28 @@ require('neodev').setup()
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
-mason_lspconfig.setup {
+-- First make sure that lspconfig is available
+local status_ok, lspconfig = pcall(require, 'lspconfig')
+if not status_ok then
+  vim.notify("Failed to load lspconfig", vim.log.levels.ERROR)
+  return
+end
+
+-- Set up mason-lspconfig with setup handlers in a single call
+mason_lspconfig.setup({
   ensure_installed = vim.tbl_keys(servers),
-}
-
-mason_lspconfig.setup_handlers {
-  function(server_name)
-    require('lspconfig')[server_name].setup {
-      capabilities = capabilities,
-      on_attach = on_attach,
-      settings = servers[server_name],
-      filetypes = (servers[server_name] or {}).filetypes,
-    }
-  end,
-}
-
+  handlers = {
+    function(server_name)
+      local server_opts = servers[server_name] or {}
+      lspconfig[server_name].setup({
+        capabilities = capabilities,
+        on_attach = on_attach,
+        settings = server_opts,
+        filetypes = server_opts.filetypes,
+      })
+    end,
+  }
+})
 -- [[ Configure nvim-cmp ]]
 -- See `:help cmp`
 local cmp = require 'cmp'
@@ -701,7 +815,10 @@ cmp.setup {
   },
 }
 
-require 'custom.core'
+-- Notify that configuration is complete
+vim.defer_fn(function()
+  vim.notify('Neovim configuration loaded successfully', vim.log.levels.INFO)
+end, 1000)
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2

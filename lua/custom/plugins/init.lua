@@ -17,7 +17,14 @@ local function get_plugin_files()
 
     -- Filtra apenas arquivos .lua, ignorando init.lua e diretórios
     if type == 'file' and name:match '%.lua$' and name ~= 'init.lua' then
-      table.insert(plugins, name:gsub('%.lua$', ''))
+      -- Exemplo CORRETO usando table.insert()
+      local plugins = {
+        'plugin1',
+        'plugin2',
+      }
+
+      -- Adicionando um novo plugin
+      table.insert(plugins, 'plugin3') -- Forma correta
     end
   end
 

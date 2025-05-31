@@ -1,58 +1,57 @@
--- Terminal Float State (taught by tj)
-vim.keymap.set('t', '<esc><esc>', '<c-\\><c-n>')
+return {
+  {
+    "akinsho/toggleterm.nvim",
+    version = "*",
+    config = function()
+      -- Keep the escape key mapping for terminal mode
+      vim.keymap.set('t', '<esc><esc>', '<c-\\><c-n>')
 
-local state = {
-  floating = {
-    buf = -1,
-    win = -1,
-  },
-}
+      require("toggleterm").setup({
+        -- Terminal configuration
+        size = function(term)
+          if term.direction == "float" then
+            return vim.o.columns * 0.8, vim.o.lines * 0.8
+          end
+          return 15
+        end,
+        open_mapping = nil, -- We'll set our custom mapping
+        hide_numbers = true,
+        shade_filetypes = {},
+        shade_terminals = false,
+        shading_factor = 2,
+        start_in_insert = true,
+        insert_mappings = true,
+        persist_size = true,
+        direction = "float",
+        close_on_exit = true,
+        shell = vim.o.shell,
+        float_opts = {
+          border = "rounded",
+          winblend = 0,
+          highlights = {
+            border = "Normal",
+            background = "Normal",
+          },
+        },
+      })
 
-local function create_floating_window(opts)
-  opts = opts or {}
-  local width = opts.width or math.floor(vim.o.columns * 0.8)
-  local height = opts.height or math.floor(vim.o.lines * 0.8)
+      -- Create a floating terminal
+      local Terminal = require("toggleterm.terminal").Terminal
+      local float_term = Terminal:new({
+        direction = "float",
+        hidden = true,
+      })
 
-  local col = math.floor((vim.o.columns - width) / 2)
-  local row = math.floor((vim.o.lines - height) / 2)
+      -- Function to toggle the floating terminal
+      local function toggle_float_term()
+        float_term:toggle()
+      end
 
-  local buf = nil
-  if vim.api.nvim_buf_is_valid(opts.buf) then
-    buf = opts.buf
-  else
-    buf = vim.api.nvim_create_buf(false, true)
-  end
+      -- Create user command to match original behavior
+      vim.api.nvim_create_user_command('Terminalpop', toggle_float_term, {})
 
-  local win_config = {
-    relative = 'editor',
-    border = 'rounded',
-    style = 'minimal',
-    width = width,
-    height = height,
-    col = col,
-    row = row,
+      -- Keep the same keymapping
+      vim.keymap.set({ 'n', 't' }, '<space>c/', toggle_float_term, { noremap = true, silent = true })
+    end,
   }
-
-  local win = vim.api.nvim_open_win(buf, true, win_config)
-
-  return { buf = buf, win = win }
-end
-
-local pop_terminal = function()
-  if not vim.api.nvim_win_is_valid(state.floating.win) then
-    state.floating = create_floating_window { buf = state.floating.buf }
-    if vim.bo[state.floating.buf].buftype ~= 'terminal' then
-      vim.cmd.terminal()
-    end
-
-    -- Start float terminal in insert mode
-    vim.api.nvim_set_current_win(state.floating.win)
-    vim.cmd 'startinsert!'
-  else
-    vim.api.nvim_win_hide(state.floating.win)
-  end
-end
-
-vim.api.nvim_create_user_command('Terminalpop', pop_terminal, {})
-
-vim.keymap.set({ 'n', 't' }, '<space>c/', pop_terminal)
+}
