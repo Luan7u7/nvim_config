@@ -48,8 +48,8 @@ return {
           trim_right = '>',
         },
       }
-      vim.keymap.set('n', '<leader>m', '<cmd>lua MiniFiles.open()<CR>', { desc = 'Toggle mini file explorer' }) -- toggle file explorer
-      vim.keymap.set('n', '<leader>el', function()
+      vim.keymap.set('n', '<leader>mm', '<cmd>lua MiniFiles.open()<CR>', { desc = 'Toggle mini file explorer' }) -- toggle file explorer
+      vim.keymap.set('n', '<leader>ml', function()
         MiniFiles.open(vim.api.nvim_buf_get_name(0), true)
         MiniFiles.reveal_cwd()
       end, { desc = 'Toggle into currently opened file' })

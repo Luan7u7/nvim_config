@@ -51,9 +51,9 @@ return {
 		}
 
 		-- ** Opens nvim file tree at start
-		-- if vim.fn.argc(-1) == 0 then
-		--     vim.cmd("NvimTreeFocus")
-		-- end
+		if vim.fn.argc(-1) == 0 then
+		    vim.cmd("NvimTreeFocus")
+		end
 
 		-- keymaps
 		local keymap = vim.keymap                                                                               -- for conciseness

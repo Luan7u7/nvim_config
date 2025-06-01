@@ -1,25 +1,25 @@
 return {
-    {
-        --NOTE: Oxocarbon
-        'nyoom-engineering/oxocarbon.nvim',
-        name = 'oxocarbon',
-        -- priority = 1000,
-        config = function()
-            require('oxocarbon').setup {
-                variant = 'main',
-                dark_variant = 'main',
-                dim_anactive_windows = false,
-                styles = {
-                    bold = true,
-                    italic = false,
-                    transparency = true,
-                },
-            }
-            -- Add in any other configuration;
-            --   event = foo,
-            --   config = bar
-        end,
-    },
+    -- {
+    --     --NOTE: Oxocarbon
+    --     'nyoom-engineering/oxocarbon.nvim',
+    --     name = 'oxocarbon',
+    --     -- priority = 1000,
+    --     config = function()
+    --         require('oxocarbon').setup {
+    --             variant = 'main',
+    --             dark_variant = 'main',
+    --             dim_anactive_windows = false,
+    --             styles = {
+    --                 bold = true,
+    --                 italic = false,
+    --                 transparency = true,
+    --             },
+    --         }
+    --         -- Add in any other configuration;
+    --         --   event = foo,
+    --         --   config = bar
+    --     end,
+    -- },
 
     -- NOTE: Rose pine
     {

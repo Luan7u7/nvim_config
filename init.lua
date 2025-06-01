@@ -681,7 +681,7 @@ require('mason-tool-installer').setup {
     'clangd',
     'pyright',
     'rust_analyzer',
-    'tsserver',
+    'typescript-language-server',
     'lua_ls',
     'tailwindcss',
     'astro',
@@ -689,6 +689,13 @@ require('mason-tool-installer').setup {
     'eslint',
     'gopls',
     'htmx',
+    'javascript',
+    'javascriptreact',
+    'typescriptreact',
+    'html',
+    'tsx',
+    'jsx',
+
     
     -- Formatters that work well on Windows
     'prettier',
@@ -717,7 +724,7 @@ local servers = {
   clangd = {},
   pyright = {},
   rust_analyzer = {},
-  tsserver = {},
+  typescript_language_server = {},
   -- html = { filetypes = { 'html', 'twig', 'hbs', 'typescriptreact', 'javascriptreact'} },
   tailwindcss = {},
   astro = {},

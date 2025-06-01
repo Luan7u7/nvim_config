@@ -1,10 +1,12 @@
 return {
   'nvim-telescope/telescope.nvim',
-  branch = 'master', -- using master to fix issues with deprecated to definition warnings
-  -- '0.1.x' for stable ver.
+  branch = 'master',
   dependencies = {
     'nvim-lua/plenary.nvim',
-    { 'nvim-telescope/telescope-fzf-native.nvim', build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release' },
+    {
+      'nvim-telescope/telescope-fzf-native.nvim',
+      build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release',
+    },
     'nvim-tree/nvim-web-devicons',
     'andrew-george/telescope-themes',
   },
@@ -40,6 +42,7 @@ return {
 
     -- Keymaps
     vim.keymap.set('n', '<leader>pr', '<cmd>Telescope oldfiles<CR>', { desc = 'Fuzzy find recent files' })
+
     vim.keymap.set('n', '<leader>pWs', function()
       local word = vim.fn.expand '<cWORD>'
       builtin.grep_string { search = word }

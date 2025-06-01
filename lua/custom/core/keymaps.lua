@@ -5,8 +5,8 @@ vim.keymap.set('n', '<leader>ec', '<cmd>NvimTreeCollapse<CR>', { desc = 'Collaps
 vim.keymap.set('n', '<leader>er', '<cmd>NvimTreeRefresh<CR>', { desc = 'Refresh file explorer' })
 
 -- utilities
-vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv", { desc = 'Move line down' })
-vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv", { desc = 'Move line up' })
+vim.keymap.set('v', '[', ":m '>+1<CR>gv=gv", { desc = 'Move line down' })
+vim.keymap.set('v', ']', ":m '<-2<CR>gv=gv", { desc = 'Move line up' })
 vim.keymap.set('n', '<C-d>', '<C-d>zz', { desc = 'Scroll down' })
 vim.keymap.set('n', '<C-u>', '<C-u>zz', { desc = 'Scroll up' })
 vim.keymap.set('n', 'J', 'mzJ`z', { desc = 'Join lines' })
@@ -32,13 +32,13 @@ vim.keymap.set('n', '<leader>tp', '<cmd>tabp<CR>')     --go to pre
 vim.keymap.set('n', '<leader>tf', '<cmd>tabnew %<CR>') --open current tab in new tab
 
 --split management
-vim.keymap.set('n', '<leader>sv', '<C-w>v', { desc = 'Split window vertically' })
+vim.keymap.set('n', '<leader>lv', '<C-w>v', { desc = 'Split window vertically' })
 -- split window vertically
-vim.keymap.set('n', '<leader>sh', '<C-w>s', { desc = 'Split window horizontally' })
+vim.keymap.set('n', '<leader>lh', '<C-w>s', { desc = 'Split window horizontally' })
 -- split window horizontally
-vim.keymap.set('n', '<leader>se', '<C-w>=', { desc = 'Make splits equal size' }) -- make split windows equal width & height
+vim.keymap.set('n', '<leader>le', '<C-w>=', { desc = 'Make splits equal size' }) -- make split windows equal width & height
 -- close current split window
-vim.keymap.set('n', '<leader>sx', '<cmd>close<CR>', { desc = 'Close current split' })
+vim.keymap.set('n', '<leader>lx', '<cmd>close<CR>', { desc = 'Close current split' })
 
 -- Toggle LSP diagnostics visibility
 local isLspDiagnosticsVisible = true

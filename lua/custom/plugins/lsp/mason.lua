@@ -16,9 +16,9 @@ return {
 
     -- NOTE: Moved these local imports below back to lspconfig.lua due to mason depracated handlers
 
-    -- local lspconfig = require("lspconfig")
-    -- local cmp_nvim_lsp = require("cmp_nvim_lsp")             -- import cmp-nvim-lsp plugin
-    -- local capabilities = cmp_nvim_lsp.default_capabilities() -- used to enable autocompletion (assign to every lsp server config)
+    local lspconfig = require 'lspconfig'
+    local cmp_nvim_lsp = require 'cmp_nvim_lsp'              -- import cmp-nvvim-lsp plugin
+    local capabilities = cmp_nvim_lsp.default_capabilities() -- used to enable autocompletion (assign to every lsp server config)
 
     -- enable mason and configure icons
     mason.setup {
@@ -36,15 +36,25 @@ return {
       -- servers for mason to install
       ensure_installed = {
         'lua_ls',
-        -- "ts_ls", currently using a ts plugin
+        'ts_ls',
         'html',
         'cssls',
         'tailwindcss',
         'gopls',
         'emmet_ls',
         'emmet_language_server',
-        -- "eslint",
+        'eslint',
         'marksman',
+        'typescript_ls',
+        'javascript_ls', 
+        'react_ls',
+        'typescript-language-server',
+        'pyright',
+        'eslint',
+        'eslint_d',
+        'prettier',
+        'tsxls',
+        'tsx_ls',
       },
     }
 

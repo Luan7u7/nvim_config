@@ -3,7 +3,7 @@ return {
   event = { 'BufReadPre', 'BufNewFile' },
   dependencies = {
     'hrsh7th/cmp-nvim-lsp',
-    -- "saghen/blink.cmp",
+    "saghen/blink.cmp",
     { 'antosha417/nvim-lsp-file-operations', config = true },
   },
   config = function()
@@ -60,7 +60,7 @@ return {
 
     -- NOTE : Moved all this to Mason including local variables
     -- used to enable autocompletion (assign to every lsp server config)
-    -- local capabilities = cmp_nvim_lsp.default_capabilities()
+    local capabilities = cmp_nvim_lsp.default_capabilities()
     -- Change the Diagnostic symbols in the sign column (gutter)
 
     -- Define sign icons for each severity
@@ -226,8 +226,8 @@ return {
     -- })
 
     -- Add other LSP servers as needed, e.g., gopls, eslint, html, etc.
-    -- lspconfig.gopls.setup({ capabilities = capabilities })
-    -- lspconfig.html.setup({ capabilities = capabilities })
-    -- lspconfig.cssls.setup({ capabilities = capabilities })
+    lspconfig.gopls.setup({ capabilities = capabilities })
+    lspconfig.html.setup({ capabilities = capabilities })
+    lspconfig.cssls.setup({ capabilities = capabilities })
   end,
 }
